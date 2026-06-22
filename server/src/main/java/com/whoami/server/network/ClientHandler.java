@@ -7,12 +7,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import com.whoami.protocol.models.UserProfile;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private DataInputStream in;
     private DataOutputStream out;
     private boolean isConnected;
+    private UserProfile userProfile;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -58,5 +60,13 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             // Ignore
         }
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 }

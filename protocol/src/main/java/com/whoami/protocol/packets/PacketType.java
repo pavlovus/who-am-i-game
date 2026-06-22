@@ -11,7 +11,8 @@ public enum PacketType {
     ANSWER(8),
     GUESS(9),
     GAME_OVER(10),
-    ADMIN_BLOCK(11);
+    ADMIN_BLOCK(11),
+    ROOM_LEAVE(12);
 
     private final int id;
 

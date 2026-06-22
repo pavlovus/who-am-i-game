@@ -17,6 +17,7 @@ import javafx.application.Platform;
 
 import java.nio.charset.StandardCharsets;
 
+import com.whoami.client.MainClient;
 import com.whoami.client.network.PacketListener;
 import com.whoami.client.network.ServerConnection;
 import com.whoami.client.state.ClientContext;
@@ -103,9 +104,12 @@ public class LoginController implements PacketListener {
                     ClientContext.getInstance().setJwtToken(parts[1]);
                     ClientContext.getInstance().setUsername(usernameField.getText());
                     System.out.println("Authentication successful! Token saved.");
-                    // TODO: Navigate to Main Menu
-                    showError("Success! (Navigation not implemented yet)");
-                    errorLabel.setTextFill(Color.web("#00d46a")); // Green color
+                    try {
+                        MainClient.setRoot("MainMenuScreen");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showError("Error loading Main Menu");
+                    }
                 } else {
                     errorLabel.setTextFill(Color.web("#f85149")); // Red color
                     showError("Auth Error: " + (parts.length > 1 ? parts[1] : "Unknown error"));

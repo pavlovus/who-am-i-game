@@ -4,8 +4,8 @@
  */
 
 .root {
-    /* Modern system font */
-    -fx-font-family: "System";
+    /* Modern system font, wider and less dense */
+    -fx-font-family: "Verdana", "Helvetica", "Arial", sans-serif;
     /* Base Colors */
     -color-bg-default: #0a0f0d;
     -color-bg-overlay: #111a14;

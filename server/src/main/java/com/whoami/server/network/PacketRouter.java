@@ -23,6 +23,10 @@ public class PacketRouter {
                         boolean isRegister = parts[0].equals("REGISTER");
                         AuthService.AuthResult result = AuthService.loginOrRegister(parts[1], parts[2], isRegister);
                         
+                        if (result.success) {
+                            handler.setUserProfile(result.profile);
+                        }
+                        
                         String responsePayload = (result.success ? "SUCCESS:" : "ERROR:") + (result.success ? result.token : result.message);
                         byte[] respData = responsePayload.getBytes(StandardCharsets.UTF_8);
                         
@@ -34,6 +38,24 @@ public class PacketRouter {
                     break;
                 case ROOM_CREATE:
                     System.out.println("Processing ROOM_CREATE...");
+                    String newRoomCode = RoomManager.getInstance().createRoom(handler);
+                    String createResponse = "SUCCESS:" + newRoomCode;
+                    byte[] createRespData = createResponse.getBytes(StandardCharsets.UTF_8);
+                    handler.sendPacket(new Packet(Packet.MAGIC_BYTE, packet.getClientId(), PacketType.ROOM_CREATE.getId(), createRespData.length, (short)0, createRespData));
+                    break;
+                case ROOM_JOIN:
+                    System.out.println("Processing ROOM_JOIN...");
+                    String joinPayloadStr = new String(packet.getPayload(), StandardCharsets.UTF_8); // Room code
+                    boolean joined = RoomManager.getInstance().joinRoom(joinPayloadStr, handler);
+                    String joinResponse = joined ? "SUCCESS" : "ERROR:Room full or not found";
+                    byte[] joinRespData = joinResponse.getBytes(StandardCharsets.UTF_8);
+                    handler.sendPacket(new Packet(Packet.MAGIC_BYTE, packet.getClientId(), PacketType.ROOM_JOIN.getId(), joinRespData.length, (short)0, joinRespData));
+                    break;
+                case ROOM_LEAVE:
+                    System.out.println("Processing ROOM_LEAVE...");
+                    RoomManager.getInstance().leaveRoom(handler);
+                    byte[] leaveRespData = "SUCCESS".getBytes(StandardCharsets.UTF_8);
+                    handler.sendPacket(new Packet(Packet.MAGIC_BYTE, packet.getClientId(), PacketType.ROOM_LEAVE.getId(), leaveRespData.length, (short)0, leaveRespData));
                     break;
                 default:
                     System.out.println("Unhandled packet type: " + type);

@@ -7,6 +7,9 @@ public class ClientContext {
 
     private String jwtToken;
     private String username;
+    private String currentRoomCode;
+    private String role;
+    private String encryptedCharacterName;
     private ServerConnection serverConnection;
 
     private ClientContext() {
@@ -40,6 +43,30 @@ public class ClientContext {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getCurrentRoomCode() {
+        return currentRoomCode;
+    }
+
+    public void setCurrentRoomCode(String currentRoomCode) {
+        this.currentRoomCode = currentRoomCode;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getEncryptedCharacterName() {
+        return encryptedCharacterName;
+    }
+
+    public void setEncryptedCharacterName(String encryptedCharacterName) {
+        this.encryptedCharacterName = encryptedCharacterName;
     }
 
     public void disconnect() {

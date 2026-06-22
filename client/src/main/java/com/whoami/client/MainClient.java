@@ -7,9 +7,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MainClient extends Application {
+
+    private static Scene scene;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -25,7 +28,7 @@ public class MainClient extends Application {
         FXMLLoader loader = new FXMLLoader(fxmlLocation);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 900, 600);
+        scene = new Scene(root, 900, 600);
         
         // Load custom Midnight Green CSS
         URL cssLocation = getClass().getResource("/css/midnight-green.css");
@@ -40,6 +43,15 @@ public class MainClient extends Application {
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(500);
         primaryStage.show();
+    }
+
+    public static void setRoot(String fxml) throws IOException {
+        URL fxmlLocation = MainClient.class.getResource("/fxml/" + fxml + ".fxml");
+        if (fxmlLocation == null) {
+            throw new IllegalStateException("Cannot find /fxml/" + fxml + ".fxml");
+        }
+        Parent root = FXMLLoader.load(fxmlLocation);
+        scene.setRoot(root);
     }
 
     public static void main(String[] args) {
