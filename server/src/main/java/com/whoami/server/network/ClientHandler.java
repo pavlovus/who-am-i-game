@@ -54,11 +54,14 @@ public class ClientHandler implements Runnable {
     }
 
     public void disconnect() {
-        this.isConnected = false;
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            // Ignore
+        if (this.isConnected) {
+            this.isConnected = false;
+            RoomManager.getInstance().leaveRoom(this);
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                // Ignore
+            }
         }
     }
 
