@@ -1,0 +1,152 @@
+/* 
+ * Midnight Green Design System CSS 
+ * Overrides AtlantaFX PrimerDark base theme
+ */
+
+.root {
+    /* Modern system font */
+    -fx-font-family: "System";
+    /* Base Colors */
+    -color-bg-default: #0a0f0d;
+    -color-bg-overlay: #111a14;
+    -color-fg-default: #e6edf3;
+    -color-fg-muted: #8b949e;
+
+    /* Accents */
+    -color-accent-emphasis: #00d46a;
+    -color-accent-fg: #00d46a;
+    -color-accent-muted: #00d46a55;
+
+    -color-danger-emphasis: #f85149;
+    -color-danger-fg: #f85149;
+    
+    -color-warning-emphasis: #d29922;
+    -color-warning-fg: #d29922;
+
+    /* Border */
+    -color-border-default: #1a2e1f;
+    -color-border-muted: #1a2e1f;
+}
+
+/* Backgrounds */
+.background {
+    -fx-background-color: -color-bg-default;
+}
+
+/* Typography */
+.h1 {
+    -fx-font-size: 36px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -color-fg-default;
+    -fx-effect: dropshadow(two-pass-box, rgba(0, 212, 106, 0.2), 10, 0.0, 0, 2);
+}
+
+.h2 {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.h3 {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.text-muted {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 14px;
+}
+
+/* Cards */
+.card {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 24px;
+    -fx-background-radius: 24px;
+    -fx-padding: 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 20, 0, 0, 10);
+}
+
+/* Input Fields */
+.text-field, .password-field {
+    -fx-background-color: #0d1410;
+    -fx-border-color: #1a2e1f;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 14px 16px;
+    -fx-text-fill: -color-fg-default;
+    -fx-font-size: 15px;
+}
+
+.text-field:hover, .password-field:hover {
+    -fx-border-color: #2b4d34;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-effect: dropshadow(three-pass-box, -color-accent-muted, 12, 0.2, 0, 0);
+    -fx-background-color: #0a0f0d;
+}
+
+/* Primary Button */
+.button-primary {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: #0a0f0d;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-padding: 14px 28px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 212, 106, 0.3), 10, 0, 0, 4);
+}
+
+.button-primary:hover {
+    -fx-background-color: #00f077;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 119, 0.5), 15, 0.2, 0, 5);
+}
+
+.button-primary:pressed {
+    -fx-background-color: #00b359;
+    -fx-effect: none;
+    -fx-translate-y: 2px;
+}
+
+/* Danger Button */
+.button-danger {
+    -fx-background-color: -color-danger-emphasis;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12px;
+    -fx-padding: 14px 28px;
+    -fx-cursor: hand;
+}
+
+.button-danger:hover {
+    -fx-background-color: derive(-color-danger-emphasis, 20%);
+}
+
+/* Ghost Button */
+.button-ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-text-fill: -color-fg-default;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-padding: 14px 28px;
+    -fx-cursor: hand;
+}
+
+.button-ghost:hover {
+    -fx-background-color: #16241a;
+    -fx-border-color: #2b4d34;
+}
+
+.button-ghost:pressed {
+    -fx-background-color: #1a2e1f;
+    -fx-translate-y: 2px;
+}

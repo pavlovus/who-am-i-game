@@ -6,12 +6,16 @@ import org.flywaydb.core.Flyway;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.TimeZone;
 
 public class ConnectionPool {
     private static HikariDataSource dataSource;
 
     public static void init() {
         if (dataSource != null) return;
+        
+        // Fix for FATAL: invalid value for parameter "TimeZone": "Europe/Kiev"
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
         HikariConfig config = new HikariConfig();
         // Adjust these to match the user's local PostgreSQL setup

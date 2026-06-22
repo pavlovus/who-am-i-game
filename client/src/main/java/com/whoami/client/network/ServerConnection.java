@@ -15,10 +15,15 @@ public class ServerConnection {
     private DataInputStream in;
     private DataOutputStream out;
     private boolean isConnected;
+    private PacketListener listener;
 
     public ServerConnection(String host, int port) {
         this.host = host;
         this.port = port;
+    }
+
+    public void setPacketListener(PacketListener listener) {
+        this.listener = listener;
     }
 
     public void connect() {
@@ -43,6 +48,9 @@ public class ServerConnection {
             try {
                 Packet packet = PacketBuilder.readFromStream(in);
                 System.out.println("Received packet of type: " + packet.getPacketType());
+                if (listener != null) {
+                    listener.onPacketReceived(packet);
+                }
             } catch (IOException e) {
                 System.err.println("Disconnected from server: " + e.getMessage());
                 disconnect();
@@ -63,6 +71,7 @@ public class ServerConnection {
     }
 
     public void disconnect() {
+        if (!isConnected) return;
         isConnected = false;
         try {
             if (socket != null && !socket.isClosed()) {
@@ -70,6 +79,9 @@ public class ServerConnection {
             }
         } catch (IOException e) {
             // Ignore
+        }
+        if (listener != null) {
+            listener.onDisconnected();
         }
     }
 }
