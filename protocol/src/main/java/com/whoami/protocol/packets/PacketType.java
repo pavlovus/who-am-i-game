@@ -12,7 +12,13 @@ public enum PacketType {
     GUESS(9),
     GAME_OVER(10),
     ADMIN_BLOCK(11),
-    ROOM_LEAVE(12);
+    ROOM_LEAVE(12),
+    REMATCH(13),
+    ADMIN_LIST(14),
+    ADMIN_KICK(15),
+    ADMIN_ADD_CHARACTER(16),
+    ADMIN_STATS(17),
+    ERROR(18);
 
     private final int id;
 
