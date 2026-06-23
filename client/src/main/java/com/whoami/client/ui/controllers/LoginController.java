@@ -23,6 +23,8 @@ import com.whoami.client.network.ServerConnection;
 import com.whoami.client.state.ClientContext;
 import com.whoami.protocol.packets.Packet;
 import com.whoami.protocol.packets.PacketType;
+import com.whoami.protocol.validation.CredentialsValidator;
+import com.whoami.protocol.validation.ValidationResult;
 
 public class LoginController implements PacketListener {
 
@@ -56,8 +58,9 @@ public class LoginController implements PacketListener {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if (username.isBlank() || password.isBlank()) {
-            showError("Please fill in all fields.");
+        ValidationResult validation = CredentialsValidator.validateCredentials(username, password);
+        if (!validation.isValid()) {
+            showError(validation.getMessage());
             shakeNode(usernameField);
             shakeNode(passwordField);
             return;
@@ -77,8 +80,9 @@ public class LoginController implements PacketListener {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if (username.isBlank() || password.isBlank()) {
-            showError("Please fill in all fields to register.");
+        ValidationResult validation = CredentialsValidator.validateCredentials(username, password);
+        if (!validation.isValid()) {
+            showError(validation.getMessage());
             shakeNode(usernameField);
             shakeNode(passwordField);
             return;
