@@ -11,6 +11,11 @@ public class ClientContext {
     private String role;
     private String encryptedCharacterName;
     private ServerConnection serverConnection;
+    
+    // Game Results
+    private String winnerRole;
+    private String gameCharacterName;
+    private int questionsAsked;
 
     private ClientContext() {
         // We initialize the connection to localhost by default
@@ -67,6 +72,30 @@ public class ClientContext {
 
     public void setEncryptedCharacterName(String encryptedCharacterName) {
         this.encryptedCharacterName = encryptedCharacterName;
+    }
+
+    public String getWinnerRole() {
+        return winnerRole;
+    }
+
+    public void setWinnerRole(String winnerRole) {
+        this.winnerRole = winnerRole;
+    }
+
+    public String getGameCharacterName() {
+        return gameCharacterName;
+    }
+
+    public void setGameCharacterName(String gameCharacterName) {
+        this.gameCharacterName = gameCharacterName;
+    }
+
+    public int getQuestionsAsked() {
+        return questionsAsked;
+    }
+
+    public void setQuestionsAsked(int questionsAsked) {
+        this.questionsAsked = questionsAsked;
     }
 
     public void disconnect() {

@@ -160,6 +160,9 @@ public class MainMenuController implements PacketListener {
             return;
         }
 
+        // Set eagerly to prevent race condition if GAME_START arrives before ROOM_JOIN response
+        ClientContext.getInstance().setCurrentRoomCode(code);
+
         byte[] payload = code.getBytes(StandardCharsets.UTF_8);
         Packet request = new Packet(Packet.MAGIC_BYTE, 0, PacketType.ROOM_JOIN.getId(), payload.length, (short)0, payload);
         ClientContext.getInstance().getServerConnection().sendPacket(request);
@@ -236,7 +239,13 @@ public class MainMenuController implements PacketListener {
                     radarTimer.stop();
                     showStatus("Game starts! Your role: " + role, false);
                     statusLabel.setStyle("-fx-text-fill: #00d46a;"); // green for success
-                    // TODO: Switch to GameScreen
+                    
+                    try {
+                        com.whoami.client.MainClient.setRoot("GameScreen");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showStatus("Error loading GameScreen", true);
+                    }
                 });
             }
         } else if (packet.getPacketType() == PacketType.ROOM_LEAVE.getId()) {
