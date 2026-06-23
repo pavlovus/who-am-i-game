@@ -108,6 +108,22 @@ public class PacketRouterTest {
     }
 
     @Test
+    public void testRouteRejectsInvalidCredentials() {
+        // Username too short -> server-side validation must reject before any DB/auth call.
+        byte[] payload = "LOGIN:ab:1".getBytes(StandardCharsets.UTF_8);
+        Packet packet = new Packet(Packet.MAGIC_BYTE, 0, PacketType.AUTH_REQUEST.getId(), payload.length, (short)0, payload);
+
+        PacketRouter.route(packet, mockClientHandler);
+
+        ArgumentCaptor<Packet> packetCaptor = ArgumentCaptor.forClass(Packet.class);
+        verify(mockClientHandler, times(1)).sendPacket(packetCaptor.capture());
+
+        Packet sentPacket = packetCaptor.getValue();
+        assertEquals(PacketType.AUTH_RESPONSE.getId(), sentPacket.getPacketType());
+        assertTrue(new String(sentPacket.getPayload(), StandardCharsets.UTF_8).startsWith("ERROR:"));
+    }
+
+    @Test
     public void testRouteMalformedAuthPayload() {
         // Normal payload is "LOGIN:user:pass" or "REGISTER:user:pass"
         // Let's send something weird: "JUSTABRAKADABRA" without colons

@@ -1,5 +1,7 @@
 package com.whoami.server.network;
 
+import com.whoami.protocol.util.Log;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,18 +22,17 @@ public class ConnectionListener implements Runnable {
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server is listening for connections...");
+            Log.info("Server is listening for connections...");
             
             while (isRunning) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("New client connected: " + clientSocket.getInetAddress());
+                Log.info("New client connected: " + clientSocket.getInetAddress());
                 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 threadPool.submit(clientHandler);
             }
         } catch (IOException e) {
-            System.err.println("Server exception: " + e.getMessage());
-            e.printStackTrace();
+            Log.error("Server exception", e);
         } finally {
             threadPool.shutdown();
         }

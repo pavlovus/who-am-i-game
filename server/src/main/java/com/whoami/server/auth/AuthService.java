@@ -14,6 +14,9 @@ public class AuthService {
                 profile = UserDAO.register(username, rawPassword);
             } else {
                 profile = UserDAO.login(username, rawPassword);
+                if (profile != null && UserDAO.isBlocked(username)) {
+                    return new AuthResult(false, "Account is blocked", null, null);
+                }
             }
 
             if (profile != null) {

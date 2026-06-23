@@ -32,6 +32,28 @@ public class UserDAO {
         return null;
     }
 
+    public static boolean isBlocked(String username) throws SQLException {
+        String query = "SELECT is_blocked FROM users WHERE username = ?";
+        try (Connection conn = ConnectionPool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getBoolean("is_blocked");
+            }
+        }
+    }
+
+    public static boolean isAdmin(String username) throws SQLException {
+        String query = "SELECT is_admin FROM users WHERE username = ?";
+        try (Connection conn = ConnectionPool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getBoolean("is_admin");
+            }
+        }
+    }
+
     public static UserProfile login(String username, String rawPassword) throws SQLException {
         String query = "SELECT id, password_hash, games_played, games_won FROM users WHERE username = ?";
         try (Connection conn = ConnectionPool.getConnection();

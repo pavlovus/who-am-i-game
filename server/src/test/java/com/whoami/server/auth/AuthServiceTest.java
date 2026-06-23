@@ -64,6 +64,19 @@ public class AuthServiceTest {
     }
 
     @Test
+    public void testBlockedUserCannotLogin() throws SQLException {
+        UserProfile mockProfile = new UserProfile(7, "banned", 1, 0);
+        mockedUserDAO.when(() -> UserDAO.login("banned", "pass")).thenReturn(mockProfile);
+        mockedUserDAO.when(() -> UserDAO.isBlocked("banned")).thenReturn(true);
+
+        AuthService.AuthResult result = AuthService.loginOrRegister("banned", "pass", false);
+
+        assertFalse(result.success, "Blocked users must not be able to log in");
+        assertNull(result.token);
+        assertEquals("Account is blocked", result.message);
+    }
+
+    @Test
     public void testDatabaseErrorDuringAuth() throws SQLException {
         mockedUserDAO.when(() -> UserDAO.login("testuser", "pass")).thenThrow(new SQLException("DB Down"));
 

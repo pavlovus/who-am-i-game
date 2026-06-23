@@ -1,5 +1,7 @@
 package com.whoami.server.database;
 
+import com.whoami.protocol.util.Log;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +22,7 @@ public class CharacterDAO {
                 return rs.getString("name");
             }
         } catch (SQLException e) {
-            System.err.println("Database error fetching character: " + e.getMessage());
+            Log.error("Database error fetching character", e);
         }
         // Fallback just in case
         return "Unknown Character";
