@@ -48,6 +48,9 @@ public class PacketRouter {
                 case GUESS:
                     handleGuess(packet, handler);
                     break;
+                case CHARACTER_SELECT:
+                    handleCharacterSelect(packet, handler);
+                    break;
                 case REMATCH:
                     handleRematch(packet, handler);
                     break;
@@ -146,6 +149,13 @@ public class PacketRouter {
         GameLogic.GuessResult result = RoomManager.getInstance().submitGuess(handler, name);
         if (result == GameLogic.GuessResult.REJECTED) {
             respond(handler, packet, PacketType.ERROR, "GUESS_REJECTED");
+        }
+    }
+
+    private static void handleCharacterSelect(Packet packet, ClientHandler handler) {
+        String name = new String(packet.getPayload(), StandardCharsets.UTF_8);
+        if (!RoomManager.getInstance().submitCharacter(handler, name)) {
+            respond(handler, packet, PacketType.ERROR, "CHARACTER_REJECTED");
         }
     }
 

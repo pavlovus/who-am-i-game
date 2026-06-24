@@ -18,7 +18,11 @@ public enum PacketType {
     ADMIN_KICK(15),
     ADMIN_ADD_CHARACTER(16),
     ADMIN_STATS(17),
-    ERROR(18);
+    ERROR(18),
+    /** Server -> riddler: prompt to pick a character. Payload = ';'-separated DB suggestions. */
+    CHARACTER_PROMPT(19),
+    /** Riddler -> server: the chosen character name (a suggestion or a custom one). */
+    CHARACTER_SELECT(20);
 
     private final int id;
 

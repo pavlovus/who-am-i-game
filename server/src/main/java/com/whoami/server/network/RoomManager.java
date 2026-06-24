@@ -10,11 +10,14 @@ import com.whoami.server.game.GameResult;
 import com.whoami.server.game.GameResults;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RoomManager {
     private static final RoomManager instance = new RoomManager();
+    private static final int SUGGESTION_COUNT = 5;
+    private static final int MAX_CHARACTER_NAME_LENGTH = 100;
     private final ConcurrentHashMap<String, GameRoom> activeRooms = new ConcurrentHashMap<>();
     private final Random random = new Random();
     private final AESEncrypter encrypter = new AESEncrypter();
@@ -40,7 +43,7 @@ public class RoomManager {
         GameRoom room = activeRooms.get(roomCode);
         if (room != null && !room.isFull()) {
             room.setPlayer2(guest);
-            startGame(room);
+            assignRolesAndPrompt(room);
             return true;
         }
         return false;
@@ -70,10 +73,30 @@ public class RoomManager {
         boolean bothReady = room.requestRematch(client);
         if (bothReady) {
             room.resetForRematch();
-            startGame(room);
+            assignRolesAndPrompt(room);
             return RematchResult.RESTARTED;
         }
         return RematchResult.WAITING;
+    }
+
+    /**
+     * Riddler's character choice. Accepts any non-blank name (a DB suggestion or
+     * a custom one), then actually starts the round. Returns false if the sender
+     * is not the riddler of a room awaiting a selection, or the name is invalid.
+     */
+    public synchronized boolean submitCharacter(ClientHandler sender, String rawName) {
+        GameRoom room = findRoom(sender);
+        if (room == null || sender != room.getRiddler() || room.getState() != GameRoom.State.SELECTING) {
+            return false;
+        }
+        // ';' is the field separator in GAME_STATE/GAME_OVER payloads, so strip it
+        // from custom names to avoid corrupting those messages on the client.
+        String name = rawName == null ? "" : rawName.trim().replace(';', ' ').trim();
+        if (name.isEmpty() || name.length() > MAX_CHARACTER_NAME_LENGTH) {
+            return false;
+        }
+        beginRound(room, name);
+        return true;
     }
 
     /** Guesser asks a question; both players receive the refreshed GAME_STATE. */
@@ -182,7 +205,11 @@ public class RoomManager {
         return activeRooms.size();
     }
 
-    private void startGame(GameRoom room) {
+    /**
+     * Picks roles at random and asks the riddler to choose a character. The game
+     * does not begin until the riddler answers with {@link #submitCharacter}.
+     */
+    private void assignRolesAndPrompt(GameRoom room) {
         boolean hostIsRiddler = random.nextBoolean();
         if (hostIsRiddler) {
             room.setRiddler(room.getPlayer1());
@@ -191,8 +218,15 @@ public class RoomManager {
             room.setRiddler(room.getPlayer2());
             room.setGuesser(room.getPlayer1());
         }
+        room.setState(GameRoom.State.SELECTING);
 
-        String characterName = CharacterDAO.getRandomCharacter();
+        List<String> suggestions = CharacterDAO.getRandomCharacters(SUGGESTION_COUNT);
+        Log.info("Room " + room.getRoomCode() + " awaiting character choice from riddler");
+        sendInfo(room.getRiddler(), PacketType.CHARACTER_PROMPT, String.join(";", suggestions));
+    }
+
+    /** Locks in the chosen character and starts the round for both players. */
+    private void beginRound(GameRoom room, String characterName) {
         room.setCharacterName(characterName);
         room.setLogic(new GameLogic(characterName));
         room.setState(GameRoom.State.IN_PROGRESS);

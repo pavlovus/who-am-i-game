@@ -35,7 +35,8 @@ public class RoomManagerGameplayTest {
         host = mock(ClientHandler.class);
         guest = mock(ClientHandler.class);
         mockedCharacterDAO = mockStatic(CharacterDAO.class);
-        mockedCharacterDAO.when(CharacterDAO::getRandomCharacter).thenReturn("TestCharacter");
+        mockedCharacterDAO.when(() -> CharacterDAO.getRandomCharacters(anyInt()))
+                .thenReturn(List.of("TestCharacter"));
         results = new InMemoryGameResultRepository();
         GameResults.set(results);
 
@@ -44,6 +45,8 @@ public class RoomManagerGameplayTest {
         GameRoom room = roomManager.findRoom(host);
         guesser = room.getGuesser();
         riddler = room.getRiddler();
+        // New flow: the riddler must pick a character before the round starts.
+        roomManager.submitCharacter(riddler, "TestCharacter");
     }
 
     @AfterEach
@@ -100,7 +103,12 @@ public class RoomManagerGameplayTest {
 
         assertEquals(RoomManager.RematchResult.WAITING, roomManager.requestRematch(guesser));
         assertEquals(RoomManager.RematchResult.RESTARTED, roomManager.requestRematch(riddler));
-        assertEquals(GameRoom.State.IN_PROGRESS, roomManager.findRoom(host).getState());
+
+        // A rematch re-assigns roles and asks the (possibly new) riddler to choose again.
+        GameRoom room = roomManager.findRoom(host);
+        assertEquals(GameRoom.State.SELECTING, room.getState());
+        roomManager.submitCharacter(room.getRiddler(), "TestCharacter");
+        assertEquals(GameRoom.State.IN_PROGRESS, room.getState());
     }
 
     @Test

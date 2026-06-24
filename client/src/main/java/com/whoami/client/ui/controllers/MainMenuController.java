@@ -3,6 +3,7 @@ package com.whoami.client.ui.controllers;
 import com.whoami.client.network.PacketListener;
 import com.whoami.client.network.ServerConnection;
 import com.whoami.client.state.ClientContext;
+import com.whoami.client.ui.CharacterChooser;
 import com.whoami.protocol.packets.Packet;
 import com.whoami.protocol.packets.PacketType;
 
@@ -20,6 +21,7 @@ import javafx.scene.shape.ArcType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -225,6 +227,16 @@ public class MainMenuController implements PacketListener {
                     showStatus(parts.length > 1 ? parts[1] : "Error joining room", true);
                 }
             });
+        } else if (packet.getPacketType() == PacketType.CHARACTER_PROMPT.getId()) {
+            String payload = new String(packet.getPayload(), StandardCharsets.UTF_8);
+            List<String> suggestions = payload.isEmpty()
+                    ? List.of()
+                    : Arrays.asList(payload.split(";"));
+            Platform.runLater(() -> {
+                ClientContext.getInstance().setRole("Riddler");
+                showStatus("You are the Riddler — choose a character", false);
+                CharacterChooser.prompt(suggestions, this::sendCharacterSelect);
+            });
         } else if (packet.getPacketType() == PacketType.GAME_START.getId()) {
             String payload = new String(packet.getPayload(), StandardCharsets.UTF_8);
             // payload format: ROLE:Riddler:EncryptedCharacter
@@ -261,6 +273,14 @@ public class MainMenuController implements PacketListener {
             showStatus("Disconnected from server", true);
             if (radarTimer != null) radarTimer.stop();
         });
+    }
+
+    private void sendCharacterSelect(String name) {
+        byte[] payload = name.getBytes(StandardCharsets.UTF_8);
+        Packet packet = new Packet(Packet.MAGIC_BYTE, 0, PacketType.CHARACTER_SELECT.getId(),
+                payload.length, (short) 0, payload);
+        ClientContext.getInstance().getServerConnection().sendPacket(packet);
+        showStatus("Character set! Starting...", false);
     }
 
     private void showStatus(String message, boolean isError) {

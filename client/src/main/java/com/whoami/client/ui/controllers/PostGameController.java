@@ -3,6 +3,7 @@ package com.whoami.client.ui.controllers;
 import com.whoami.client.MainClient;
 import com.whoami.client.network.PacketListener;
 import com.whoami.client.state.ClientContext;
+import com.whoami.client.ui.CharacterChooser;
 import com.whoami.protocol.packets.Packet;
 import com.whoami.protocol.packets.PacketType;
 
@@ -12,6 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 public class PostGameController implements PacketListener {
 
@@ -78,6 +81,14 @@ public class PostGameController implements PacketListener {
                     rematchBtn.setDisable(false);
                     rematchBtn.setText("Request Rematch");
                 }
+            } else if (packet.getPacketType() == PacketType.CHARACTER_PROMPT.getId()) {
+                String payload = new String(packet.getPayload(), StandardCharsets.UTF_8);
+                List<String> suggestions = payload.isEmpty()
+                        ? List.of()
+                        : Arrays.asList(payload.split(";"));
+                ClientContext.getInstance().setRole("Riddler");
+                showStatus("You are the Riddler — choose a character", false);
+                CharacterChooser.prompt(suggestions, this::sendCharacterSelect);
             } else if (packet.getPacketType() == PacketType.GAME_START.getId()) {
                 // Same logic as MainMenuController
                 String payload = new String(packet.getPayload(), StandardCharsets.UTF_8);
@@ -106,6 +117,14 @@ public class PostGameController implements PacketListener {
         });
     }
     
+    private void sendCharacterSelect(String name) {
+        byte[] payload = name.getBytes(StandardCharsets.UTF_8);
+        Packet packet = new Packet(Packet.MAGIC_BYTE, 0, PacketType.CHARACTER_SELECT.getId(),
+                payload.length, (short) 0, payload);
+        ClientContext.getInstance().getServerConnection().sendPacket(packet);
+        showStatus("Character set! Starting...", false);
+    }
+
     private void showStatus(String msg, boolean isError) {
         statusLabel.setText(msg);
         statusLabel.setStyle(isError ? "-fx-text-fill: #f85149;" : "-fx-text-fill: #8b949e;");

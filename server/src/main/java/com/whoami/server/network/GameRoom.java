@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameRoom {
 
-    public enum State { WAITING, IN_PROGRESS, FINISHED }
+    public enum State { WAITING, SELECTING, IN_PROGRESS, FINISHED }
 
     private final String roomCode;
     private ClientHandler player1; // Host

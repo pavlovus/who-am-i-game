@@ -28,7 +28,8 @@ public class RoomManagerDisconnectTest {
         host = mock(ClientHandler.class);
         guest = mock(ClientHandler.class);
         mockedCharacterDAO = mockStatic(CharacterDAO.class);
-        mockedCharacterDAO.when(CharacterDAO::getRandomCharacter).thenReturn("TestCharacter");
+        mockedCharacterDAO.when(() -> CharacterDAO.getRandomCharacters(anyInt()))
+                .thenReturn(List.of("TestCharacter"));
     }
 
     @AfterEach
@@ -41,7 +42,9 @@ public class RoomManagerDisconnectTest {
     @Test
     public void opponentIsNotifiedWhenPlayerLeavesMidGame() {
         String code = roomManager.createRoom(host);
-        roomManager.joinRoom(code, guest); // starts game, sends GAME_START to both
+        roomManager.joinRoom(code, guest);
+        GameRoom room = roomManager.findRoom(host);
+        roomManager.submitCharacter(room.getRiddler(), "TestCharacter"); // round is now IN_PROGRESS
 
         roomManager.leaveRoom(host);
 
