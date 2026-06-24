@@ -45,6 +45,10 @@ public class MainClient extends Application {
         primaryStage.show();
     }
 
+    public static Scene getScene() {
+        return scene;
+    }
+
     public static void setRoot(String fxml) throws IOException {
         URL fxmlLocation = MainClient.class.getResource("/fxml/" + fxml + ".fxml");
         if (fxmlLocation == null) {

@@ -55,7 +55,9 @@ public class RoomManager {
             return;
         }
         ClientHandler opponent = room.getOpponent(client);
-        if (opponent != null && room.getState() == GameRoom.State.IN_PROGRESS) {
+        // Notify the opponent whenever they were already matched (mid-game or on
+        // the post-game screen), so their rematch button is disabled gracefully.
+        if (opponent != null && room.getState() != GameRoom.State.WAITING) {
             sendInfo(opponent, PacketType.GAME_OVER, "OPPONENT_LEFT");
         }
         activeRooms.remove(room.getRoomCode());
@@ -76,6 +78,8 @@ public class RoomManager {
             assignRolesAndPrompt(room);
             return RematchResult.RESTARTED;
         }
+        // Let the opponent know a rematch is on the table so they can accept it.
+        sendInfo(room.getOpponent(client), PacketType.REMATCH, "OPPONENT_WANTS_REMATCH");
         return RematchResult.WAITING;
     }
 

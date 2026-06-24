@@ -150,3 +150,51 @@
     -fx-background-color: #1a2e1f;
     -fx-translate-y: 2px;
 }
+
+/* Character Chooser Dialog */
+.character-dialog {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 24px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 24, 0, 0, 12);
+}
+
+.character-dialog > .content {
+    -fx-padding: 8px 0 16px 0;
+}
+
+.character-dialog .label {
+    -fx-text-fill: -color-fg-default;
+}
+
+.character-dialog .button-bar {
+    -fx-padding: 8px 0 0 0;
+}
+
+/* Suggestion chips */
+.chip {
+    -fx-background-color: #0d1410;
+    -fx-border-color: #1a2e1f;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-text-fill: -color-fg-default;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.chip:hover {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
+}
+
+.chip-selected {
+    -fx-background-color: -color-accent-muted;
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}

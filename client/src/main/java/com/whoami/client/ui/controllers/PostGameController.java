@@ -76,6 +76,9 @@ public class PostGameController implements PacketListener {
                 if (payload.equals("RESTARTED")) {
                     // Game is restarting, but wait for GAME_START
                     showStatus("Rematch accepted! Starting...", false);
+                } else if (payload.equals("OPPONENT_WANTS_REMATCH")) {
+                    showStatus("Opponent wants a rematch! Click to accept.", false);
+                    rematchBtn.setText("Accept Rematch");
                 } else if (payload.startsWith("ERROR")) {
                     showStatus(payload, true);
                     rematchBtn.setDisable(false);
